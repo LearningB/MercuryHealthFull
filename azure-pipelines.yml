@@ -30,16 +30,7 @@ steps:
     configuration: '$(buildConfiguration)'
 
 
-- task: VSTest@2
-  inputs:
-    testAssemblyVer2: "**\\*test*.dll\n!**\\obj\\**"
-    testFiltercriteria: "TestCategory=Unit Test"
-    runOnlyImpactedTests: false
-    vsTestVersion: "15.0"
-    runInParallel: false
-    codeCoverageEnabled: true
-    platform: "$(BuildPlatform)"
-    configuration: "$(BuildConfiguration)"
+
 
 - task: PublishSymbols@1
   inputs:
