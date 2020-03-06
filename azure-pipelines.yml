@@ -23,19 +23,30 @@ steps:
 
 - task: VSBuild@1
   inputs:
+    vsVersion: "15.0"
     solution: 'Web/src/MercuryHealth.sln'
     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-    
+
 - task: VSTest@2
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    testAssemblyVer2: "**\\*test*.dll\n!**\\obj\\**"
+    testFiltercriteria: "TestCategory=Unit Test"
+    runOnlyImpactedTests: false
+    vsTestVersion: "15.0"
+    runInParallel: false
+    codeCoverageEnabled: true
+    platform: "$(BuildPlatform)"
+    configuration: "$(BuildConfiguration)"
 
-- task: PublishBuildArtifacts@1
+- task: PublishSymbols@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
+    SearchPattern: "**\\bin\\**\\*.pdb"
+
+- task: CopyFiles@1
+  inputs:
+    SourceFolder: "$(build.sourcesdirectory)"
+    Content: "**\\bin\\$(BuildConfiguration)\\**\nsrc\\*.testsettings"
+    TargetFolder: "$(build.artifactstagingdirectory)"
